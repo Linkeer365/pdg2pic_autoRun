@@ -5,6 +5,8 @@ import win32con
 import os
 import time
 
+check_text_path=r"D:\pdg2pic_autoRun\already_trans.txt"
+
 # 强烈建议先下载一个spy++，否则没有可视化这个hds你不知道是什么意思！！
 
 # 前台鼠标：是模拟鼠标点击这个动作，
@@ -68,7 +70,7 @@ def click_on_pos(pos_list):
     win32api.SetCursorPos(btn_pos)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP | win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
 
-def get_hd_from_child_hds(father_hd,some_idx):
+def get_hd_from_child_hds(father_hd,some_idx,expect_name):
     child_hds=[]
     win32gui.EnumChildWindows(father_hd,lambda hwnd, param: param.append(hwnd),child_hds)
 
@@ -84,7 +86,11 @@ def get_hd_from_child_hds(father_hd,some_idx):
     print("The Name:{}".format(name))
     print("The HD:{}".format(hd))
 
-    return child_hds[some_idx]
+    if name==expect_name:
+        return child_hds[some_idx]
+    else:
+        print("窗口不对！")
+        return None
 
 pdg2pic_str="Pdg2Pic"
 btn_idx=3
@@ -99,7 +105,7 @@ p2p_path=r"D:\FreePdg2Pdf\Pdg2Pic.exe"
 uvz_dir=r"D:\uvz图片包2"
 
 
-def make_one_folder(uvz_path):
+def make_one_folder(uvz_path,pdgs_cnt):
     # uvz_path=r"D:\uvz图片包2\北京古代经济史.孙健主编.北京燕山出版社.1996"
 
     os.startfile(p2p_path)
@@ -111,7 +117,8 @@ def make_one_folder(uvz_path):
 
     p2p_hd=win32gui.FindWindowEx(root_desktop_hd,0,0,pdg2pic_str)
 
-    fst_btn_hd=get_hd_from_child_hds(p2p_hd,3)
+    # 第一下我们点选的按钮没有名字
+    fst_btn_hd=get_hd_from_child_hds(p2p_hd,3,expect_name="")
 
     # left,top,right,bottom=win32gui.GetWindowRect(btn_hd)
     #
@@ -130,9 +137,9 @@ def make_one_folder(uvz_path):
     # print("done.")
 
     choose_pdg_dir_hd=win32gui.FindWindowEx(root_desktop_hd,0,0,choose_pdg_dir_str)
-    write_text_btn_hd=get_hd_from_child_hds(choose_pdg_dir_hd,6)
-    queding_btn_hd=get_hd_from_child_hds(choose_pdg_dir_hd,9)
-    shuzhuangtu_btn_hd=get_hd_from_child_hds(choose_pdg_dir_hd,4)
+    write_text_btn_hd=get_hd_from_child_hds(choose_pdg_dir_hd,6,expect_name="")
+    queding_btn_hd=get_hd_from_child_hds(choose_pdg_dir_hd,9,expect_name="确定")
+    # shuzhuangtu_btn_hd=get_hd_from_child_hds(choose_pdg_dir_hd,4)
 
     # 找到一个位置，我他妈强行点你！
     hayashi_pos=[839,333]
@@ -146,9 +153,18 @@ def make_one_folder(uvz_path):
 
     # 格式统计，点确定
 
-    time.sleep(1)
-    geshitongji_hd=win32gui.FindWindowEx(root_desktop_hd,0,0,geshitongji_str)
-    queding2_btn_hd=get_hd_from_child_hds(geshitongji_hd,0)
+    # 这里一定要睡他5s以上，因为有的pdg文档他妈太长了，那个页数统计的弹窗要很久才能出来
+    # time.sleep(6)
+
+    while True:
+    # time.sleep(1)
+        time.sleep(1)
+        geshitongji_hd = win32gui.FindWindowEx(root_desktop_hd, 0, 0, geshitongji_str)
+        queding2_btn_hd=get_hd_from_child_hds(geshitongji_hd,0,expect_name="确定")
+        if queding2_btn_hd!=None:
+            break
+        elif queding2_btn_hd==None:
+            print("多给你1秒！")
 
     win32api.PostMessage(queding2_btn_hd,win32con.BM_CLICK)
 
@@ -157,14 +173,51 @@ def make_one_folder(uvz_path):
 
     # # 再次请求p2p_hd
     p2p_hd=win32gui.FindWindowEx(root_desktop_hd,0,0,pdg2pic_str)
-    kaishizhuanhuan_btn_hd=get_hd_from_child_hds(p2p_hd,0)
+    kaishizhuanhuan_btn_hd=get_hd_from_child_hds(p2p_hd,0,expect_name="&4、开始转换")
     time.sleep(1)
     win32api.PostMessage(kaishizhuanhuan_btn_hd,win32con.BM_CLICK)
 
-    time.sleep(1)
-    # 键盘点击Esc
-    win32api.keybd_event(win32con.VK_ESCAPE,0,0,0)
-    win32api.keybd_event(13,0,win32con.KEYEVENTF_KEYUP,0)
+    # 这里一定要睡18s，原因同理，有的文档太他妈长了
+    # time.sleep(18)
+
+    # 每秒大概可以做32个，那么花费的时间一共是pdg_cnt//32+1
+
+    # 本来time_expect应该还要+1的，但是实验证明一般都会多出2-3秒，所以不加一
+    time_expect=pdgs_cnt//32-4
+    print("大概用时{}秒".format(time_expect))
+
+    time.sleep(time_expect)
+
+    # 艹怎么有走几步停一停的文件啊！！丢！
+
+    while True:
+        time.sleep(1)
+        test_kids=[]
+        p2p_hd = win32gui.FindWindowEx(root_desktop_hd, 0, 0, pdg2pic_str)
+        win32gui.EnumChildWindows(p2p_hd, lambda hwnd, param: param.append(hwnd), test_kids)
+        if len(test_kids)>=4:
+            print("多给你1秒！")
+        else:
+            break
+
+    new_kids=[]
+    win32gui.EnumChildWindows(p2p_hd,lambda hwnd, param: param.append(hwnd),new_kids)
+
+    # 转换出现错误记录
+    if len(new_kids)==4:
+        res_hd=get_hd_from_child_hds(p2p_hd,1,"否(&N)")
+        win32gui.PostMessage(res_hd,win32con.BM_CLICK)
+        time.sleep(1)
+        win32api.SendMessage(p2p_hd,win32con.WM_CLOSE,0,0)
+    else:
+        res_hd=get_hd_from_child_hds(p2p_hd,0,"确定")
+        win32gui.PostMessage(res_hd,win32con.BM_CLICK)
+        time.sleep(1)
+        win32api.SendMessage(p2p_hd,win32con.WM_CLOSE,0,0)
+
+    # # 键盘点击Esc
+    # win32api.keybd_event(win32con.VK_ESCAPE,0,0,0)
+    # win32api.keybd_event(13,0,win32con.KEYEVENTF_KEYUP,0)
 
     # time.sleep(20)
 
@@ -190,12 +243,22 @@ def make_one_folder(uvz_path):
     print("One done.")
 
 def main():
+
+    if not os.path.exists(check_text_path):
+        print("干！没事别乱删东西啊！")
+    with open(check_text_path,"r",encoding="utf-8") as f:
+        lines=f.readlines()
+    print("Lines:{}".format(lines))
     for each in os.listdir(uvz_dir):
         # uvz_path = os.path.abspath(each)
         # print(each)
         uvz_path=uvz_dir+os.sep+each
         if os.path.isdir(uvz_path):
-            make_one_folder(uvz_path)
+            pdg_len=len(os.listdir(uvz_path))
+        if os.path.isdir(uvz_path) and (not uvz_path+"\n" in lines):
+            make_one_folder(uvz_path,pdg_len)
+            with open(check_text_path,"a",encoding="utf-8") as f:
+                f.write(uvz_path+"\n")
     print("all down.")
 
 if __name__ == '__main__':

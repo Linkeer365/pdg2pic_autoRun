@@ -13,8 +13,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/openP2PWindow.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="267">
-              <caret line="163" column="16" selection-end-line="292" />
+            <state relative-caret-position="63">
+              <caret line="185" column="30" lean-forward="true" selection-end-line="355" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
               </folding>
@@ -43,7 +43,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="950" />
     <option name="width" value="979" />
     <option name="height" value="1050" />
@@ -127,12 +127,12 @@
       <workItem from="1597119257591" duration="7806000" />
       <workItem from="1597140954028" duration="12132000" />
       <workItem from="1597160072480" duration="1798000" />
-      <workItem from="1597164275720" duration="7929000" />
+      <workItem from="1597164275720" duration="14204000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="29665000" />
+    <option name="totallyTimeSpent" value="35940000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -178,20 +178,20 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/openP2PWindow.py</url>
-          <line>219</line>
+          <line>282</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/mumumu$openP2PWindow.coverage" NAME="openP2PWindow Coverage Results" MODIFIED="1597198324581" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/mumumu$openP2PWindow.coverage" NAME="openP2PWindow Coverage Results" MODIFIED="1597204734851" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/openP2PWindow.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="267">
-          <caret line="163" column="16" selection-end-line="292" />
+        <state relative-caret-position="63">
+          <caret line="185" column="30" lean-forward="true" selection-end-line="355" />
           <folding>
             <element signature="e#0#16#0" expanded="true" />
           </folding>
