@@ -29,66 +29,67 @@ def get_old_dir_list(root_dir,fst_idx,last_idx):
 def single_unzip(old_dir,one_file):
 	os.chdir(old_dir)
 	flag=0
-	if one_file.endswith(".uvz") or one_file.endswith(".zip"):
-		if one_file.endswith(".uvz"):
-			# print("gg!")
-			new_zip=one_file[:-4]+".zip"
-			os.rename(one_file,new_zip)
-			one_file=new_zip
-		# elif one_file.endswith(".zip"):
-			# print("one file:",one_file)
-			# print("cc!")
-		zfile=zipfile.ZipFile(one_file,"r")
-		zInfo=zipfile.ZipInfo(one_file)
-		# zfile.printdir()
-		# zfile.printdir()
-		# print("Type:",zInfo.compress_type)
-		for filename in zfile.namelist():
-			# print(filename)
-			td=target_dir
-			some_list=filename.split("/")
-			if len(some_list)==1:
-				# 压缩包内直接装着的就是pdg文件，没有再多的文件夹
-				tmp_dir=one_file.strip(".zip")
-				flag=1
-			elif len(some_list)==2:
-				# print("mm")
-				if some_list[1]!='':
-					tmp_dir=some_list[0]
-					# 压缩包里还有一个文件夹，装着所有的pdg文件
-					# 这里是这样的形式，就是 文件夹/pdg文件
-					# 这里文件一定会露出来，而不是隐藏着的
-					flag=2
-				elif some_list[1]=='':
-					# 这里文件是隐藏着的，不要紧，跳过他就可以了...
-					continue
-			# print(filename)
-			# if filename.endswith(".pdg"):
-			# 	td2=td+os.sep+one_file.strip(".zip")
-			# 	os.makedirs(td2)
-			# 	td=td2
-			data=zfile.read(filename)
-			if not os.path.exists(td+os.sep+tmp_dir):
-				os.makedirs(td+os.sep+tmp_dir)
-			if flag==1:
-				td2=td+os.sep+tmp_dir
-				td=td2
-			with open(td+os.sep+filename,"w+b") as f:
-				f.write(data)
+	# assert one_file.enswith(".uvz") or one_file.endswith(".zip")
+	if one_file.endswith(".uvz"):
+		# print("gg!")
+		new_zip=one_file[:-4]+".zip"
+		os.rename(one_file,new_zip)
+		one_file=new_zip
+	# elif one_file.endswith(".zip"):
+		# print("one file:",one_file)
+		# print("cc!")
+	zfile=zipfile.ZipFile(one_file,"r")
+	zInfo=zipfile.ZipInfo(one_file)
+	# zfile.printdir()
+	# zfile.printdir()
+	# print("Type:",zInfo.compress_type)
+	for filename in zfile.namelist():
+		# print(filename)
+		td=target_dir
+		some_list=filename.split("/")
+		if len(some_list)==1:
+			# 压缩包内直接装着的就是pdg文件，没有再多的文件夹
+			tmp_dir=one_file.strip(".zip")
+			flag=1
+		elif len(some_list)==2:
+			# print("mm")
+			if some_list[1]!='':
+				tmp_dir=some_list[0]
+				# 压缩包里还有一个文件夹，装着所有的pdg文件
+				# 这里是这样的形式，就是 文件夹/pdg文件
+				# 这里文件一定会露出来，而不是隐藏着的
+				flag=2
+			elif some_list[1]=='':
+				# 这里文件是隐藏着的，不要紧，跳过他就可以了...
+				continue
+		# print(filename)
+		# if filename.endswith(".pdg"):
+		# 	td2=td+os.sep+one_file.strip(".zip")
+		# 	os.makedirs(td2)
+		# 	td=td2
+		data=zfile.read(filename)
+		if not os.path.exists(td+os.sep+tmp_dir):
+			os.makedirs(td+os.sep+tmp_dir)
+		if flag==1:
+			td2=td+os.sep+tmp_dir
+			td=td2
+		with open(td+os.sep+filename,"w+b") as f:
+			f.write(data)
 	print("one done.")
 
 def main():
 	fst_idx,last_idx=get_idxs()
 	old_dirs=get_old_dir_list(root_dir,fst_idx,last_idx)
 	# pool=Pool(processes=32)
-	# thread_pool = ThreadPoolExecutor(max_workers=15)
+	thread_pool = ThreadPoolExecutor(max_workers=33)
 	for old_dir in old_dirs:
 		for one_file in os.listdir(old_dir):
+			if one_file.endswith(".uvz") or one_file.endswith(".zip"):
 			# print("old dir:",old_dir)
 			# print("One file:",one_file)
-			single_unzip(old_dir,one_file)
-			# future=thread_pool.submit(single_unzip,old_dir,one_file)
-	# thread_pool.shutdown(wait=False)
+			# single_unzip(old_dir,one_file)
+				future=thread_pool.submit(single_unzip,old_dir,one_file)
+	thread_pool.shutdown(wait=False)
 	print("ThreadPool: All done.")
 			# pool.apply_async(single_unzip,args=(old_dir,one_file))
 	# pool.close()
