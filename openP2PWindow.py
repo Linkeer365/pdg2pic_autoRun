@@ -156,7 +156,10 @@ def make_one_folder(uvz_path,pdgs_cnt):
     # 这里一定要睡他5s以上，因为有的pdg文档他妈太长了，那个页数统计的弹窗要很久才能出来
     # time.sleep(6)
 
+    mm_cnt=0
+
     while True:
+        mm_cnt+=1
     # time.sleep(1)
         time.sleep(1)
         geshitongji_hd = win32gui.FindWindowEx(root_desktop_hd, 0, 0, geshitongji_str)
@@ -165,6 +168,10 @@ def make_one_folder(uvz_path,pdgs_cnt):
             break
         elif queding2_btn_hd==None:
             print("多给你1秒！")
+            if mm_cnt==10:
+                click_on_pos(hayashi_pos)
+                print("click to refresh.")
+
 
     win32api.PostMessage(queding2_btn_hd,win32con.BM_CLICK)
 
@@ -184,6 +191,8 @@ def make_one_folder(uvz_path,pdgs_cnt):
 
     # 本来time_expect应该还要+1的，但是实验证明一般都会多出2-3秒，所以不加一
     time_expect=pdgs_cnt//32-4
+    if time_expect<=0:
+        time_expect=1
     print("大概用时{}秒".format(time_expect))
 
     time.sleep(time_expect)
