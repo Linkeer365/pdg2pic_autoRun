@@ -114,11 +114,13 @@ def make_one_folder(uvz_path,pdgs_cnt):
 
     # 最小化启动，https://stackoverflow.com/questions/2319838/open-a-program-with-python-minimized-or-hidden
 
-    SW_MINIMIZE = 6
-    info = subprocess.STARTUPINFO()
-    info.dwFlags = subprocess.STARTF_USESHOWWINDOW
-    info.wShowWindow = SW_MINIMIZE
-    subprocess.Popen(p2p_path, startupinfo=info)
+    # SW_MINIMIZE = 6
+    # info = subprocess.STARTUPINFO()
+    # info.dwFlags = subprocess.STARTF_USESHOWWINDOW
+    # info.wShowWindow = SW_MINIMIZE
+    # subprocess.Popen(p2p_path, startupinfo=info)
+
+    subprocess.Popen(p2p_path)
 
     # 这个sleep也是必须有的！
     time.sleep(0.5)
@@ -190,13 +192,8 @@ def make_one_folder(uvz_path,pdgs_cnt):
                 # click_on_pos(hayashi_pos)
                 print("click to refresh.")
                 win32gui.PostMessage(refresh_btn_hd,win32con.BM_CLICK)
-
-
     win32api.PostMessage(queding2_btn_hd,win32con.BM_CLICK)
-
     time.sleep(0.5)
-
-
     # # 再次请求p2p_hd
     p2p_hd=win32gui.FindWindowEx(root_desktop_hd,0,0,pdg2pic_str)
     kaishizhuanhuan_btn_hd=get_hd_from_child_hds(p2p_hd,0,expect_name="&4、开始转换")
@@ -229,7 +226,7 @@ def make_one_folder(uvz_path,pdgs_cnt):
             if len(test_kids)==4:
                 res_hd=get_hd_from_child_hds(p2p_hd,1,"否(&N)")
                 win32gui.PostMessage(res_hd,win32con.BM_CLICK)
-                break
+                return
         else:
             break
     res_hd=get_hd_from_child_hds(p2p_hd,0,"确定")
