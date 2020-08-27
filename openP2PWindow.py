@@ -1,9 +1,13 @@
-import pyautogui
 import win32gui
 import win32api
 import win32con
 import os
 import time
+
+
+import subprocess
+
+import sys
 
 check_text_path=r"D:\pdg2pic_autoRun\already_trans.txt"
 
@@ -108,15 +112,24 @@ uvz_dir=r"D:\uvz图片包2"
 def make_one_folder(uvz_path,pdgs_cnt):
     # uvz_path=r"D:\uvz图片包2\北京古代经济史.孙健主编.北京燕山出版社.1996"
 
-    os.startfile(p2p_path)
+    # 最小化启动，https://stackoverflow.com/questions/2319838/open-a-program-with-python-minimized-or-hidden
+
+    SW_MINIMIZE = 6
+    info = subprocess.STARTUPINFO()
+    info.dwFlags = subprocess.STARTF_USESHOWWINDOW
+    info.wShowWindow = SW_MINIMIZE
+    subprocess.Popen(p2p_path, startupinfo=info)
 
     # 这个sleep也是必须有的！
-    time.sleep(1)
+    time.sleep(0.5)
 
     root_desktop_hd=None
 
     p2p_hd=win32gui.FindWindowEx(root_desktop_hd,0,0,pdg2pic_str)
 
+    win32gui.ShowWindow(p2p_hd,win32con.SW_MINIMIZE)
+
+    refresh_btn_hd=get_hd_from_child_hds(p2p_hd,0,expect_name="请选择源文件夹：")
     # 第一下我们点选的按钮没有名字
     fst_btn_hd=get_hd_from_child_hds(p2p_hd,3,expect_name="")
 
@@ -133,7 +146,7 @@ def make_one_folder(uvz_path,pdgs_cnt):
     win32api.PostMessage(fst_btn_hd,win32con.BM_CLICK)
 
     # 这里必须有一个sleep
-    time.sleep(1)
+    time.sleep(0.5)
     # print("done.")
 
     choose_pdg_dir_hd=win32gui.FindWindowEx(root_desktop_hd,0,0,choose_pdg_dir_str)
@@ -141,14 +154,19 @@ def make_one_folder(uvz_path,pdgs_cnt):
     queding_btn_hd=get_hd_from_child_hds(choose_pdg_dir_hd,9,expect_name="确定")
     # shuzhuangtu_btn_hd=get_hd_from_child_hds(choose_pdg_dir_hd,4)
 
+    # 时代变了，不需要强行点击了，用这个hd就可以...
+
+    list1_hd=get_hd_from_child_hds(p2p_hd,18,"List1")
+    win32gui.SendMessage(list1_hd,win32con.BM_CLICK)
+
     # 找到一个位置，我他妈强行点你！
     hayashi_pos=[839,333]
-    click_on_pos(hayashi_pos)
+    # click_on_pos(hayashi_pos)
 
     # 凡是有click都让他sleep(1)
-    time.sleep(1)
+    time.sleep(0.5)
     win32gui.SendMessage(write_text_btn_hd,win32con.WM_SETTEXT,0,uvz_path)
-    time.sleep(1)
+    time.sleep(0.5)
     win32gui.SendMessage(queding_btn_hd,win32con.BM_CLICK)
 
     # 格式统计，点确定
@@ -160,8 +178,8 @@ def make_one_folder(uvz_path,pdgs_cnt):
 
     while True:
         mm_cnt+=1
-    # time.sleep(1)
-        time.sleep(1)
+    # time.sleep(0.5)
+        time.sleep(0.5)
         geshitongji_hd = win32gui.FindWindowEx(root_desktop_hd, 0, 0, geshitongji_str)
         queding2_btn_hd=get_hd_from_child_hds(geshitongji_hd,0,expect_name="确定")
         if queding2_btn_hd!=None:
@@ -169,19 +187,20 @@ def make_one_folder(uvz_path,pdgs_cnt):
         elif queding2_btn_hd==None:
             print("多给你1秒！")
             if mm_cnt==10:
-                click_on_pos(hayashi_pos)
+                # click_on_pos(hayashi_pos)
                 print("click to refresh.")
+                win32gui.SendMessage(refresh_btn_hd,win32con.BM_CLICK)
 
 
     win32api.PostMessage(queding2_btn_hd,win32con.BM_CLICK)
 
-    time.sleep(1)
+    time.sleep(0.5)
 
 
     # # 再次请求p2p_hd
     p2p_hd=win32gui.FindWindowEx(root_desktop_hd,0,0,pdg2pic_str)
     kaishizhuanhuan_btn_hd=get_hd_from_child_hds(p2p_hd,0,expect_name="&4、开始转换")
-    time.sleep(1)
+    time.sleep(0.5)
     win32api.PostMessage(kaishizhuanhuan_btn_hd,win32con.BM_CLICK)
 
     # 这里一定要睡18s，原因同理，有的文档太他妈长了
@@ -200,29 +219,24 @@ def make_one_folder(uvz_path,pdgs_cnt):
     # 艹怎么有走几步停一停的文件啊！！丢！
 
     while True:
-        time.sleep(1)
+        time.sleep(0.5)
         test_kids=[]
         p2p_hd = win32gui.FindWindowEx(root_desktop_hd, 0, 0, pdg2pic_str)
         win32gui.EnumChildWindows(p2p_hd, lambda hwnd, param: param.append(hwnd), test_kids)
         if len(test_kids)>=4:
             print("多给你1秒！")
+            # 转换出现错误记录
+            if len(test_kids)==4:
+                res_hd=get_hd_from_child_hds(p2p_hd,1,"否(&N)")
+                win32gui.PostMessage(res_hd,win32con.BM_CLICK)
+                break
         else:
             break
+    res_hd=get_hd_from_child_hds(p2p_hd,0,"确定")
+    win32gui.PostMessage(res_hd,win32con.BM_CLICK)
+    # time.sleep(0.5)
+    # win32api.SendMessage(p2p_hd,win32con.WM_CLOSE,0,0)
 
-    new_kids=[]
-    win32gui.EnumChildWindows(p2p_hd,lambda hwnd, param: param.append(hwnd),new_kids)
-
-    # 转换出现错误记录
-    if len(new_kids)==4:
-        res_hd=get_hd_from_child_hds(p2p_hd,1,"否(&N)")
-        win32gui.PostMessage(res_hd,win32con.BM_CLICK)
-        time.sleep(1)
-        win32api.SendMessage(p2p_hd,win32con.WM_CLOSE,0,0)
-    else:
-        res_hd=get_hd_from_child_hds(p2p_hd,0,"确定")
-        win32gui.PostMessage(res_hd,win32con.BM_CLICK)
-        time.sleep(1)
-        win32api.SendMessage(p2p_hd,win32con.WM_CLOSE,0,0)
 
     # # 键盘点击Esc
     # win32api.keybd_event(win32con.VK_ESCAPE,0,0,0)
@@ -298,11 +312,11 @@ if __name__ == '__main__':
 # print("Menu:{};Menu1:".format(menu))
 
 # win32gui.SendMessage(write_text_btn_hd,win32con.WM_SETTEXT,0,uvz_path)
-# time.sleep(1)
+# time.sleep(0.5)
 # win32gui.SendMessage(write_text_btn_hd,win32con.WM_COMMAND,win32con.VK_RETURN)
 
 
-# time.sleep(1)
+# time.sleep(0.5)
 
 # bb_hd=get_hd_from_child_hds(write_text_btn_hd,1)
 #
@@ -347,7 +361,7 @@ if __name__ == '__main__':
 # for each_char in choose_pdg_dir_str:
 #     win32api.SendMessage(edit_pdg_dir_hd,win32con.WM_CHAR,each_char,0)
 #
-# time.sleep(1)
+# time.sleep(0.5)
 # win32api.SendMessage(yes_pdg_dir_hd,win32con.BM_CLICK)
 #
 # print("done.")
