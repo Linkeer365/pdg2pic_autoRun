@@ -114,13 +114,13 @@ def make_one_folder(uvz_path,pdgs_cnt):
 
     # 最小化启动，https://stackoverflow.com/questions/2319838/open-a-program-with-python-minimized-or-hidden
 
-    # SW_MINIMIZE = 6
-    # info = subprocess.STARTUPINFO()
-    # info.dwFlags = subprocess.STARTF_USESHOWWINDOW
-    # info.wShowWindow = SW_MINIMIZE
-    # subprocess.Popen(p2p_path, startupinfo=info)
+    SW_MINIMIZE = 6
+    info = subprocess.STARTUPINFO()
+    info.dwFlags = subprocess.STARTF_USESHOWWINDOW
+    info.wShowWindow = SW_MINIMIZE
+    subprocess.Popen(p2p_path, startupinfo=info)
 
-    subprocess.Popen(p2p_path)
+    # subprocess.Popen(p2p_path)
 
     # 这个sleep也是必须有的！
     time.sleep(0.5)
@@ -159,7 +159,7 @@ def make_one_folder(uvz_path,pdgs_cnt):
     # 时代变了，不需要强行点击了，用这个hd就可以...
 
     list1_hd=get_hd_from_child_hds(p2p_hd,18,"List1")
-    win32gui.PostMessage(list1_hd,win32con.BM_CLICK)
+    win32gui.SendMessage(list1_hd,win32con.BM_CLICK)
 
     # 找到一个位置，我他妈强行点你！
     hayashi_pos=[839,333]
@@ -169,7 +169,7 @@ def make_one_folder(uvz_path,pdgs_cnt):
     time.sleep(0.5)
     win32gui.SendMessage(write_text_btn_hd,win32con.WM_SETTEXT,0,uvz_path)
     time.sleep(0.5)
-    win32gui.PostMessage(queding_btn_hd,win32con.BM_CLICK)
+    win32gui.SendMessage(queding_btn_hd,win32con.BM_CLICK)
 
     # 格式统计，点确定
 
@@ -191,7 +191,7 @@ def make_one_folder(uvz_path,pdgs_cnt):
             if mm_cnt==10:
                 # click_on_pos(hayashi_pos)
                 print("click to refresh.")
-                win32gui.PostMessage(refresh_btn_hd,win32con.BM_CLICK)
+                win32gui.SendMessage(refresh_btn_hd,win32con.BM_CLICK)
     win32api.PostMessage(queding2_btn_hd,win32con.BM_CLICK)
     time.sleep(0.5)
     # # 再次请求p2p_hd
