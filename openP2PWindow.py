@@ -157,7 +157,7 @@ def make_one_folder(uvz_path,pdgs_cnt):
     # 时代变了，不需要强行点击了，用这个hd就可以...
 
     list1_hd=get_hd_from_child_hds(p2p_hd,18,"List1")
-    win32gui.SendMessage(list1_hd,win32con.BM_CLICK)
+    win32gui.PostMessage(list1_hd,win32con.BM_CLICK)
 
     # 找到一个位置，我他妈强行点你！
     hayashi_pos=[839,333]
@@ -167,7 +167,7 @@ def make_one_folder(uvz_path,pdgs_cnt):
     time.sleep(0.5)
     win32gui.SendMessage(write_text_btn_hd,win32con.WM_SETTEXT,0,uvz_path)
     time.sleep(0.5)
-    win32gui.SendMessage(queding_btn_hd,win32con.BM_CLICK)
+    win32gui.PostMessage(queding_btn_hd,win32con.BM_CLICK)
 
     # 格式统计，点确定
 
@@ -189,7 +189,7 @@ def make_one_folder(uvz_path,pdgs_cnt):
             if mm_cnt==10:
                 # click_on_pos(hayashi_pos)
                 print("click to refresh.")
-                win32gui.SendMessage(refresh_btn_hd,win32con.BM_CLICK)
+                win32gui.PostMessage(refresh_btn_hd,win32con.BM_CLICK)
 
 
     win32api.PostMessage(queding2_btn_hd,win32con.BM_CLICK)
