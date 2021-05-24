@@ -86,7 +86,7 @@ def main():
 	old_dirs=get_old_dir_list(root_dir,fst_idx,last_idx)
 	# pool=Pool(processes=32)
 	# 最大设置为257
-	thread_pool = ThreadPoolExecutor(max_workers=5)
+	# thread_pool = ThreadPoolExecutor(max_workers=5)
 	for old_dir in old_dirs:
 		for one_file in os.listdir(old_dir):
 			if one_file.endswith(".uvz") or one_file.endswith(".zip"):
@@ -94,9 +94,9 @@ def main():
 			# print("One file:",one_file)
 			# single_unzip(old_dir,one_file)
 				zip_file_name=rename_uvz(one_file,old_dir)
-				future=thread_pool.submit(single_file_unzip,zip_file_name,old_dir)
-	thread_pool.shutdown(wait=False)
-	print("ThreadPool: All done.")
+				single_file_unzip(zip_file_name,old_dir)
+	# thread_pool.shutdown(wait=False)
+	print("All done.")
 			# pool.apply_async(single_unzip,args=(old_dir,one_file))
 	# pool.close()
 	# pool.join()

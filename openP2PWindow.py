@@ -4,6 +4,9 @@ import win32con
 import os
 import time
 
+# 只能单线程，多线程already_trans会有滥竽充数者！
+# from concurrent.futures import ThreadPoolExecutor
+
 
 import subprocess
 
@@ -66,7 +69,7 @@ check_text_path=r"D:\pdg2pic_autoRun\already_trans.txt"
 #     tempt = win32api.GetCursorPos() # 记录鼠标所处位置的坐标
 #     x = tempt[0]-choose_rect[0] # 计算相对x坐标
 #     y = tempt[1]-choose_rect[1] # 计算相对y坐标
-#     print(x,y)
+#     print(tempt)
 #     # time.sleep(0.5) # 每0.5s输出一次
 
 def click_on_pos(pos_list):
@@ -197,7 +200,7 @@ def make_one_folder(uvz_path,pdgs_cnt):
     # # 再次请求p2p_hd
     p2p_hd=win32gui.FindWindowEx(root_desktop_hd,0,0,pdg2pic_str)
     kaishizhuanhuan_btn_hd=get_hd_from_child_hds(p2p_hd,0,expect_name="&4、开始转换")
-    time.sleep(0.5)
+    time.sleep(1.5)
     win32api.PostMessage(kaishizhuanhuan_btn_hd,win32con.BM_CLICK)
 
     # 这里一定要睡18s，原因同理，有的文档太他妈长了
@@ -231,6 +234,10 @@ def make_one_folder(uvz_path,pdgs_cnt):
             break
     res_hd=get_hd_from_child_hds(p2p_hd,0,"确定")
     win32gui.PostMessage(res_hd,win32con.BM_CLICK)
+    # print("close it!")
+    # win32gui.PostMessage(p2p_hd,win32con.WM_CLOSE,0,0)
+
+
     # time.sleep(0.5)
     # win32api.SendMessage(p2p_hd,win32con.WM_CLOSE,0,0)
 
@@ -269,6 +276,7 @@ def main():
     with open(check_text_path,"r",encoding="utf-8") as f:
         lines=f.readlines()
     print("Lines:{}".format(lines))
+    # thread_pool=ThreadPoolExecutor(max_workers=32)
     for each in os.listdir(uvz_dir):
         # uvz_path = os.path.abspath(each)
         # print(each)
@@ -277,8 +285,10 @@ def main():
             pdg_len=len(os.listdir(uvz_path))
         if os.path.isdir(uvz_path) and (not uvz_path+"\n" in lines):
             make_one_folder(uvz_path,pdg_len)
+            # thread_pool.submit(make_one_folder,uvz_path,pdg_len)
             with open(check_text_path,"a",encoding="utf-8") as f:
                 f.write(uvz_path+"\n")
+    # thread_pool.shutdown(wait=False)
     print("all down.")
 
 if __name__ == '__main__':
